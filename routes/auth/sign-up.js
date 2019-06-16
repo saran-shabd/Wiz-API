@@ -9,6 +9,7 @@ const emailTypes = require('../../constants/emailTypes');
 const emailUtils = require('../../utils/email');
 const stringUtils = require('../../utils/strings');
 const tokenUtils = require('../../utils/tokens');
+const tokenTypes = require('../../constants/tokenTypes');
 
 router.post('', async (request, response) => {
     let { firstname, lastname, regno, password } = request.body;
@@ -59,13 +60,16 @@ router.post('', async (request, response) => {
 
             const otp = stringUtils.generateRandomAlphaNumericStr(10);
             const encryptedOtp = tokenUtils.encryptOtp({ otp });
-            const signUpAccessToken = tokenUtils.encryptToken({
-                firstname,
-                lastname,
-                regno,
-                password,
-                encryptedOtp
-            });
+            const signUpAccessToken = tokenUtils.encryptToken(
+                {
+                    firstname,
+                    lastname,
+                    regno,
+                    password,
+                    encryptedOtp
+                },
+                tokenTypes.SignUpAccessToken
+            );
 
             // send otp to user's email address
 
@@ -119,7 +123,7 @@ router.post('', async (request, response) => {
 
 router.post(
     '/verify',
-    tokenUtils.verifyTokenMiddleware,
+    tokenUtils.verifyTokenMiddleware(tokenTypes.SignUpAccessToken),
     (request, response) => {
         let { otp } = request.body;
 
@@ -167,11 +171,14 @@ router.post(
             .save()
             .then(() => {
                 // create useraccesstoken to return to the user
-                const useraccesstoken = tokenUtils.encryptToken({
-                    firstname,
-                    lastname,
-                    regno
-                });
+                const useraccesstoken = tokenUtils.encryptToken(
+                    {
+                        firstname,
+                        lastname,
+                        regno
+                    },
+                    tokenTypes.UserAccessToken
+                );
 
                 response.status(200).json({
                     status: true,

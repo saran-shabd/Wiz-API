@@ -5,6 +5,7 @@ const mongoose = require('mongoose');
 
 const stringUtils = require('../../utils/strings');
 const tokenUtils = require('../../utils/tokens');
+const tokenTypes = require('../../constants/tokenTypes');
 
 const router = Router();
 
@@ -39,11 +40,14 @@ router.post('', (request, response) => {
                 .json({ status: false, message: 'Incorrect Password' });
 
         // create useraccesstoken to return to the user
-        const useraccesstoken = tokenUtils.encryptToken({
-            firstname: data.firstname,
-            lastname: data.lastname,
-            regno: data.regno
-        });
+        const useraccesstoken = tokenUtils.encryptToken(
+            {
+                firstname: data.firstname,
+                lastname: data.lastname,
+                regno: data.regno
+            },
+            tokenTypes.UserAccessToken
+        );
 
         // return useraccesstoken to the user
         response.status(200).json({

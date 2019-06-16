@@ -19,33 +19,35 @@ const decryptOtp = token => {
     }
 };
 
-const encryptToken = object => {
-    return jwt.sign(object, APP_SECRET);
+const encryptToken = (object, tokenType) => {
+    return jwt.sign(object, `${APP_SECRET}.${tokenType}`);
 };
 
-const decryptToken = token => {
+const decryptToken = (token, tokenType) => {
     try {
-        const decoded = jwt.verify(token, APP_SECRET);
+        const decoded = jwt.verify(token, `${APP_SECRET}.${tokenType}`);
         return { status: true, decoded };
     } catch (err) {
         return { status: false, decoded: null };
     }
 };
 
-const verifyTokenMiddleware = (request, response, next) => {
-    let { token } = request.body;
-    if (stringUtils.containsEmptyString([token]))
-        return response
-            .status(400)
-            .json({ status: false, message: 'Invalid Credentials' });
-    let decryptedToken = decryptToken(token);
-    if (!decryptedToken.status)
-        return response
-            .status(400)
-            .json({ status: false, message: 'Invalid Token' });
+const verifyTokenMiddleware = tokenType => {
+    return (request, response, next) => {
+        let { token } = request.body;
+        if (stringUtils.containsEmptyString([token]))
+            return response
+                .status(400)
+                .json({ status: false, message: 'Invalid Credentials' });
+        let decryptedToken = decryptToken(token, tokenType);
+        if (!decryptedToken.status)
+            return response
+                .status(400)
+                .json({ status: false, message: 'Invalid Token' });
 
-    request.decryptToken = decryptedToken;
-    next();
+        request.decryptToken = decryptedToken;
+        next();
+    };
 };
 
 module.exports = {

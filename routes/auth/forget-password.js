@@ -7,6 +7,7 @@ const emailTypes = require('../../constants/emailTypes');
 const emailUtils = require('../../utils/email');
 const stringUtils = require('../../utils/strings');
 const tokenUtils = require('../../utils/tokens');
+const tokenTypes = require('../../constants/tokenTypes');
 
 const router = Router();
 
@@ -36,12 +37,15 @@ router.post('', async (request, response) => {
         // generate otp and accesstoken to return to the user
         const otp = stringUtils.generateRandomAlphaNumericStr(10);
         const encryptedOtp = tokenUtils.encryptOtp({ otp });
-        const forgotPasswordAccessToken = tokenUtils.encryptToken({
-            firstname,
-            lastname,
-            regno,
-            encryptedOtp
-        });
+        const forgotPasswordAccessToken = tokenUtils.encryptToken(
+            {
+                firstname,
+                lastname,
+                regno,
+                encryptedOtp
+            },
+            tokenTypes.ForgotPasswordAccessToken
+        );
 
         // get alert-email configurations
         const transport = await emailUtils.getEmailTransport();
@@ -85,7 +89,7 @@ router.post('', async (request, response) => {
 
 router.post(
     '/verify',
-    tokenUtils.verifyTokenMiddleware,
+    tokenUtils.verifyTokenMiddleware(tokenTypes.ForgotPasswordAccessToken),
     (request, response) => {
         let { otp } = request.body;
 
@@ -120,12 +124,15 @@ router.post(
             encryptedOtp
         } = request.decryptToken.decoded;
 
-        let accessToken = tokenUtils.encryptToken({
-            firstname,
-            lastname,
-            regno,
-            encryptedOtp
-        });
+        let accessToken = tokenUtils.encryptToken(
+            {
+                firstname,
+                lastname,
+                regno,
+                encryptedOtp
+            },
+            tokenTypes.ForgotPasswordVerifyAccessToken
+        );
         response.status(200).json({
             status: true,
             message: 'OTP Verified',
@@ -136,7 +143,9 @@ router.post(
 
 router.post(
     '/update',
-    tokenUtils.verifyTokenMiddleware,
+    tokenUtils.verifyTokenMiddleware(
+        tokenTypes.ForgotPasswordVerifyAccessToken
+    ),
     (request, response) => {
         const { password } = request.body;
 
