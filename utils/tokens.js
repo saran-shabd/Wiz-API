@@ -2,6 +2,8 @@
 
 const jwt = require('jsonwebtoken');
 
+const stringUtils = require('./strings');
+
 const { APP_SECRET, OTP_SECRET } = process.env;
 
 const encryptOtp = object => {
@@ -30,9 +32,26 @@ const decryptToken = token => {
     }
 };
 
+const verifyTokenMiddleware = (request, response, next) => {
+    let { token } = request.body;
+    if (stringUtils.containsEmptyString([token]))
+        return response
+            .status(400)
+            .json({ status: false, message: 'Invalid Credentials' });
+    let decryptedToken = decryptToken(token);
+    if (!decryptedToken.status)
+        return response
+            .status(400)
+            .json({ status: false, message: 'Invalid Token' });
+
+    request.decryptToken = decryptedToken;
+    next();
+};
+
 module.exports = {
     encryptOtp,
     decryptOtp,
     encryptToken,
-    decryptToken
+    decryptToken,
+    verifyTokenMiddleware
 };
