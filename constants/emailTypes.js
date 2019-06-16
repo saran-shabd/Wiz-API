@@ -5,5 +5,6 @@
  */
 
 module.exports = {
-    SignUpOtp: 'SignUpOtp'
+    SignUpOtp: 'SignUpOtp',
+    ForgotPasswordOtp: 'ForgotPasswordOtp'
 };

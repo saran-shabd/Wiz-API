@@ -39,6 +39,10 @@ const getEmailTemplate = async type => {
         return fs.readFileSync(
             path.join(templateDir, `${emailTypes.SignUpOtp}.html`)
         );
+    } else if (type === emailTypes.ForgotPasswordOtp) {
+        return fs.readFileSync(
+            path.join(templateDir, `${emailTypes.ForgotPasswordOtp}.html`)
+        );
     }
 };
 
