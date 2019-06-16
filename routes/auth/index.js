@@ -148,20 +148,37 @@ router.post('/sign-up/verify', verifyToken, (request, response) => {
 
     // user successfully authenticated, store user in database
 
+    // get user details from accesstoken
+    const {
+        firstname,
+        lastname,
+        password,
+        regno
+    } = request.decryptToken.decoded;
+
     let newUser = {
-        firstname: request.decryptToken.decoded.firstname,
-        lastname: request.decryptToken.decoded.lastname,
-        password: stringUtils.hashStr(request.decryptToken.decoded.password), // store hashed password
-        regno: request.decryptToken.decoded.regno
+        firstname,
+        lastname,
+        password: stringUtils.hashStr(password), // store hashed password
+        regno
     };
 
     const User = mongoose.model('User');
     new User(newUser)
         .save()
         .then(() => {
-            response
-                .status(200)
-                .json({ status: true, message: 'User Account Created' });
+            // create useraccesstoken to return to the user
+            const useraccesstoken = tokenUtils.encryptToken({
+                firstname,
+                lastname,
+                regno
+            });
+
+            response.status(200).json({
+                status: true,
+                message: 'User Account Created',
+                useraccesstoken
+            });
         })
         .catch(error => {
             console.log(error);
