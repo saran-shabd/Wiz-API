@@ -6,6 +6,7 @@ const router = Router();
 
 // load routes
 router.use('/auth', require('./auth'));
+router.use('/profile', require('./profile'));
 
 // invalid route handler
 router.use('*', (request, response) => {
