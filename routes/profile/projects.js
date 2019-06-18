@@ -192,4 +192,42 @@ router.post(
     }
 );
 
+/**
+ * @description Delete project of a User
+ */
+router.delete(
+    '',
+    tokenUtils.verifyTokenMiddleware(tokenTypes.UserAccessToken),
+    (request, response) => {
+        let { project_id } = request.body;
+
+        // check for invalid user credentials
+        if (stringUtils.containsEmptyString([project_id]))
+            return response
+                .status(400)
+                .json({ status: false, message: 'Invalid Credentials' });
+
+        // delete the project
+        const Projects = mongoose.model('Projects');
+        Projects.findOneAndRemove({ _id: project_id })
+            .then(() => {
+                response
+                    .status(200)
+                    .json({ status: true, message: 'Project Deleted' });
+            })
+            .catch(error => {
+                if (error.name === 'CastError' && error.kind === 'ObjectId')
+                    // invalid project_id
+                    return response.status(400).json({
+                        status: false,
+                        message: 'Invalid Credentials'
+                    });
+                console.log(error);
+                response
+                    .status(500)
+                    .json({ status: false, message: 'Internal Server Error' });
+            });
+    }
+);
+
 module.exports = router;

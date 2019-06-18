@@ -200,6 +200,12 @@ router.delete(
                     .json({ status: true, message: 'Tech Deleted' });
             })
             .catch(error => {
+                if (error.name === 'CastError' && error.kind === 'ObjectId')
+                    // invalid tech_id
+                    return response.status(400).json({
+                        status: false,
+                        message: 'Invalid Credentials'
+                    });
                 console.log(error);
                 response
                     .status(500)
