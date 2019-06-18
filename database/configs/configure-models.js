@@ -5,3 +5,4 @@ require('../models/User');
 require('../models/PublicProfile');
 require('../models/Projects');
 require('../models/ProgrammingProfile');
+require('../models/Tech');

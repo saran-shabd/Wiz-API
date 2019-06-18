@@ -14,16 +14,13 @@ const Projects = new Schema({
         required: true
     },
     briefDescription: {
-        type: String,
-        required: true
+        type: String
     },
     gitHubUrl: {
-        type: String,
-        required: true
+        type: String
     },
     startTime: {
-        type: String, // format : Month, Year
-        required: true
+        type: String // format : Month, Year
     },
     endTime: {
         type: String // format : Month, Year

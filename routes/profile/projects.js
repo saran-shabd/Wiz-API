@@ -85,19 +85,10 @@ router.post(
                 .status(400)
                 .json({ status: false, message: 'Invalid Credentials' });
 
-        // check GitHub Url format
-        if (
-            !(
-                String(gitHubUrl).indexOf('https://www.github.com/') === 0 ||
-                String(gitHubUrl).indexOf('https://github.com/') === 0
-            )
-        )
-            return response
-                .status(400)
-                .json({ status: false, message: 'Invalid Credentials' });
-
         // parse startTime and endTime
-        let startTime = `${startMonth}, ${startYear}`;
+        let startTime;
+        if (null === startMonth && null === startYear) startTime = null;
+        else startTime = `${startMonth}, ${startYear}`;
         let endTime;
         if (null === endMonth && null === endYear) endTime = null;
         else endTime = `${endMonth}, ${endYear}`;
@@ -123,6 +114,11 @@ router.post(
                     return response.status(400).json({
                         status: false,
                         message: 'Project with same name already exists'
+                    });
+                if (error.name === 'ValidationError')
+                    return response.status(400).json({
+                        status: false,
+                        message: 'Cannot set any field to null'
                     });
                 console.log(error);
                 response

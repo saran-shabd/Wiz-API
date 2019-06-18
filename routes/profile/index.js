@@ -8,5 +8,6 @@ const router = Router();
 router.use('/public', require('./public'));
 router.use('/projects', require('./projects'));
 router.use('/programming', require('./programming'));
+router.use('/tech', require('./tech'));
 
 module.exports = router;
