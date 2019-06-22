@@ -114,7 +114,6 @@ router.post('', async (request, response) => {
         })
         .catch(error => {
             console.log(error);
-            isError = true;
             response
                 .status(500)
                 .json({ status: false, message: 'Internal Server Error' });
