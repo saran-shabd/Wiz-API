@@ -76,9 +76,7 @@ router.post(
         briefDescription,
         gitHubUrl,
         startMonth,
-        startYear,
-        endMonth,
-        endYear
+        startYear
       ])
     )
       return response
