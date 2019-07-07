@@ -12,6 +12,12 @@ const { logError } = require('../../utils/logging');
 
 const router = Router();
 
+/**
+ * @public
+ * @param { regno }
+ * @returns { token: forgotPasswordAccessToken }
+ * @description Send OTP to user via email after verification
+ */
 router.post('', async (request, response) => {
   const { regno } = request.body;
 
@@ -113,6 +119,12 @@ router.post('', async (request, response) => {
     });
 });
 
+/**
+ * @private
+ * @param { token: forgotPasswordAccessToken, otp }
+ * @returns { token: forgotPasswordVerifyAccessToken }
+ * @description Verify OTP and send another access token for final verification
+ */
 router.post(
   '/verify',
   tokenUtils.verifyTokenMiddleware(tokenTypes.ForgotPasswordAccessToken),
@@ -150,7 +162,7 @@ router.post(
       encryptedOtp
     } = request.decryptToken.decoded;
 
-    let accessToken = tokenUtils.encryptToken(
+    let forgotPasswordVerifyAccessToken = tokenUtils.encryptToken(
       {
         firstname,
         lastname,
@@ -162,11 +174,17 @@ router.post(
     response.status(200).json({
       status: true,
       message: 'OTP Verified',
-      token: accessToken
+      token: forgotPasswordVerifyAccessToken
     });
   }
 );
 
+/**
+ * @private
+ * @param { token: forgotPasswordVerifyAccessToken, password }
+ * @returns {}
+ * @description Update user password after final verification
+ */
 router.post(
   '/update',
   tokenUtils.verifyTokenMiddleware(tokenTypes.ForgotPasswordVerifyAccessToken),

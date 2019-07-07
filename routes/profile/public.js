@@ -10,6 +10,9 @@ const { logError } = require('../../utils/logging');
 const router = Router();
 
 /**
+ * @private
+ * @param { token: useraccesstoken }
+ * @returns { profile }
  * @description Get Public Profile of the User
  */
 router.get(
@@ -100,6 +103,9 @@ router.get(
 );
 
 /**
+ * @private
+ * @param { token: useraccesstoken, ...profileDetailsToBeUpdated }
+ * @returns {}
  * @description Update Public Profile of the User
  */
 router.post(

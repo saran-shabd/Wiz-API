@@ -11,6 +11,11 @@ const { logError } = require('./logging');
 
 const templateDir = path.join(__dirname, '..', 'email-templates');
 
+/**
+ * @param {}
+ * @returns { Transport }
+ * @description Get configured Transport
+ */
 const getEmailTransport = async () => {
   const KeyValuePair = mongoose.model('KeyValuePair');
   return KeyValuePair.findOne({ name: 'alert-email-address' })
@@ -49,6 +54,11 @@ const getEmailTransport = async () => {
     });
 };
 
+/**
+ * @param { type }
+ * @returns { File }
+ * @description Get email-template File
+ */
 const getEmailTemplate = async type => {
   if (type === emailTypes.SignUpOtp) {
     return fs.readFileSync(

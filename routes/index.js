@@ -9,7 +9,12 @@ router.use('/auth', require('./auth'));
 router.use('/profile', require('./profile'));
 router.use('/search', require('./search'));
 
-// invalid route handler
+/**
+ * @public
+ * @param {}
+ * @returns {}
+ * @description Invalid Route Handler
+ */
 router.use('*', (request, response) => {
   response
     .status(404)

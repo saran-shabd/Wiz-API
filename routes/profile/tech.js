@@ -11,6 +11,9 @@ const { logError } = require('../../utils/logging');
 const router = Router();
 
 /**
+ * @private
+ * @param { token: useraccesstoken }
+ * @returns { techs }
  * @description Get all technologies used by the User
  */
 router.get(
@@ -58,6 +61,9 @@ router.get(
 );
 
 /**
+ * @private
+ * @param { token: useraccesstoken, techName, learningYear, stillUseIt, level, sourceName, sourceUrl }
+ * @returns {}
  * @description Add Tech of a User
  */
 router.post(
@@ -129,6 +135,9 @@ router.post(
 );
 
 /**
+ * @private
+ * @param { token: useraccesstoken, ...techDetailsToBeUpdated }
+ * @returns {}
  * @description Update Tech of the User
  */
 router.post(
@@ -196,6 +205,9 @@ router.post(
 );
 
 /**
+ * @private
+ * @param { token: useraccesstoken, tech_id }
+ * @returns {}
  * @description Delete Tech of a User
  */
 router.delete(

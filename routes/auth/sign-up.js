@@ -12,6 +12,12 @@ const tokenUtils = require('../../utils/tokens');
 const tokenTypes = require('../../constants/tokenTypes');
 const { logError } = require('../../utils/logging');
 
+/**
+ * @public
+ * @param { firstname, lastname, regno, password }
+ * @returns { token: signUpAccessToken }
+ * @description Send OTP to user via email after verification
+ */
 router.post('', async (request, response) => {
   let { firstname, lastname, regno, password } = request.body;
 
@@ -137,6 +143,12 @@ router.post('', async (request, response) => {
     });
 });
 
+/**
+ * @private
+ * @param { token: signUpAccessToken, otp }
+ * @returns { useraccesstoken }
+ * @description Sign Up User after final verification
+ */
 router.post(
   '/verify',
   tokenUtils.verifyTokenMiddleware(tokenTypes.SignUpAccessToken),

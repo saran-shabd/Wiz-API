@@ -10,6 +10,9 @@ const { logError } = require('../../utils/logging');
 const router = Router();
 
 /**
+ * @private
+ * @param { token: useraccesstoken }
+ * @returns { profile }
  * @description Get competitive programming profile of a User
  */
 router.get(
@@ -74,7 +77,10 @@ router.get(
 );
 
 /**
- * @description Update/Create Programming Profile of the User
+ * @private
+ * @param { token: useraccesstoken, preferedLanguage, codeChefUrl, hackerearthUrl, topCoderUrl, gitHubUrl, projectEulerKey }
+ * @returns {}
+ * @description Update (or Create if not created already) Programming Profile of the User
  */
 router.post(
   '',

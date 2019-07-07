@@ -2,7 +2,7 @@
 
 const log4js = require('log4js');
 
-// create Error logger
+// create logger
 const logger = log4js.configure({
   appenders: {
     errorLogs: { type: 'file', filename: 'logs/errorLogs.log' },
@@ -16,6 +16,7 @@ const logger = log4js.configure({
 
 /**
  * @param { error, message }
+ * @returns {}
  * @description create error logs
  */
 const logError = (error, message) => {
@@ -24,6 +25,7 @@ const logError = (error, message) => {
 
 /**
  * @param { message }
+ * @returns {}
  * @description create info logs
  */
 const logInfo = message => {

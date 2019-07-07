@@ -11,6 +11,9 @@ const { logError } = require('../../utils/logging');
 const router = Router();
 
 /**
+ * @private
+ * @param { token: useraccesstoken }
+ * @returns { projects }
  * @description Get all projects of the User
  */
 router.get(
@@ -57,6 +60,9 @@ router.get(
 );
 
 /**
+ * @private
+ * @param { token: useraccesstoken, projectName, briefDescription, gitHubUrl, startMonth, startYear, endMonth, endYear }
+ * @returns {}
  * @description Add Project for a User
  */
 router.post(
@@ -140,6 +146,9 @@ router.post(
 );
 
 /**
+ * @private
+ * @param { token: useraccesstoken, ...projectDetailsToBeUpdated }
+ * @returns {}
  * @description Update Project Details
  */
 router.post(
@@ -209,6 +218,9 @@ router.post(
 );
 
 /**
+ * @private
+ * @param { token: useraccesstoken, project_id }
+ * @returns {}
  * @description Delete project of a User
  */
 router.delete(

@@ -22,6 +22,7 @@ app.use('/', require('./routes'));
 
 const port = process.env.PORT || 4000;
 app.listen(port, () => {
+  // Log Info
   logInfo({
     message: `Server is up and running at port ${port}`,
     location: 'server'

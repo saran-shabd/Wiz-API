@@ -10,6 +10,12 @@ const { logError } = require('../../utils/logging');
 
 const router = Router();
 
+/**
+ * @public
+ * @param { regno, password }
+ * @returns { useraccesstoken }
+ * @description Log In User
+ */
 router.post('', (request, response) => {
   const { regno, password } = request.body;
 

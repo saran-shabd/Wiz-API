@@ -14,8 +14,7 @@ const router = Router();
  * @private
  * @param { username, pageNo }
  * @returns { users }
- * @description Search User(s) using firstname or lastname or both. Returns
- *              10 results at a time
+ * @description Search User(s) using firstname or lastname or both
  */
 router.get(
   '/username',
