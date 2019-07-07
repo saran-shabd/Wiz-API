@@ -6,6 +6,7 @@ const mongoose = require('mongoose');
 const tokenTypes = require('../../constants/tokenTypes');
 const tokenUtils = require('../../utils/tokens');
 const stringUtils = require('../../utils/strings');
+const { logError } = require('../../utils/logging');
 
 const router = Router();
 
@@ -41,7 +42,13 @@ router.get(
         });
       })
       .catch(error => {
-        console.log(error);
+        // Log Error
+        logError(error, {
+          message: 'Error in getting all projects of a user from database',
+          location: 'routes/profile/projects',
+          requestType: 'GET',
+          requestUrl: '/profile/projects'
+        });
         response
           .status(500)
           .json({ status: false, message: 'Internal Server Error' });
@@ -116,7 +123,15 @@ router.post(
             status: false,
             message: 'Cannot set any field to null'
           });
-        console.log(error);
+
+        // Log Error
+        logError(error, {
+          message: 'Error in storing new project in database',
+          location: 'routes/profile/projects',
+          requestType: 'POST',
+          requestUrl: '/profile/projects/add'
+        });
+
         response
           .status(500)
           .json({ status: false, message: 'Internal Server Error' });
@@ -177,7 +192,15 @@ router.post(
             status: false,
             message: 'Invalid Credentials'
           });
-        console.log(error);
+
+        // Log Error
+        logError(error, {
+          message: 'Error in updating project of a user in database',
+          location: 'routes/profile/projects',
+          requestType: 'POST',
+          requestUrl: '/profile/projects/update'
+        });
+
         response
           .status(500)
           .json({ status: false, message: 'Internal Server Error' });
@@ -213,7 +236,15 @@ router.delete(
             status: false,
             message: 'Invalid Credentials'
           });
-        console.log(error);
+
+        // Log Error
+        logError(error, {
+          message: 'Error in deleting a project of a user from database',
+          location: 'routes/profile/projects',
+          requestType: 'DELETE',
+          requestUrl: '/profile/projects'
+        });
+
         response
           .status(500)
           .json({ status: false, message: 'Internal Server Error' });

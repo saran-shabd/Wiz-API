@@ -3,6 +3,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 require('dotenv').config();
+const { logInfo } = require('./utils/logging');
 
 const app = express();
 
@@ -20,4 +21,9 @@ require('./database/configs/configure-models');
 app.use('/', require('./routes'));
 
 const port = process.env.PORT || 4000;
-app.listen(port, console.log(`server is up and running at port ${port}`));
+app.listen(port, () => {
+  logInfo({
+    message: `Server is up and running at port ${port}`,
+    location: 'server'
+  });
+});

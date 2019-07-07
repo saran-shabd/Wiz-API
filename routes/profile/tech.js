@@ -6,6 +6,7 @@ const mongoose = require('mongoose');
 const tokenUtils = require('../../utils/tokens');
 const stringUtils = require('../../utils/strings');
 const tokenTypes = require('../../constants/tokenTypes');
+const { logError } = require('../../utils/logging');
 
 const router = Router();
 
@@ -42,7 +43,13 @@ router.get(
         });
       })
       .catch(error => {
-        console.log(data);
+        // Log Error
+        logError(error, {
+          message: 'Error in getting all techs of a user from database',
+          location: 'routes/profile/tech',
+          requestType: 'GET',
+          requestUrl: '/profile/tech'
+        });
         response
           .status(500)
           .json({ status: false, message: 'Internal Server Error' });
@@ -105,7 +112,15 @@ router.post(
             status: false,
             message: 'Cannot set any field to null'
           });
-        console.log(error.name);
+
+        // Log Error
+        logError(error, {
+          message: 'Error in creating new tech of a user in database',
+          location: 'routes/profile/tech',
+          requestType: 'POST',
+          requestUrl: '/profile/tech/add'
+        });
+
         response
           .status(500)
           .json({ status: false, message: 'Internal Server Error' });
@@ -164,7 +179,15 @@ router.post(
             status: false,
             message: 'Invalid Credentials'
           });
-        console.log(error);
+
+        // Log Error
+        logError(error, {
+          message: 'Error in updating tech of a user in database',
+          location: 'routes/profile/tech',
+          requestType: 'POST',
+          requestUrl: '/profile/tech/update'
+        });
+
         response
           .status(500)
           .json({ status: false, message: 'Internal Server Error' });
@@ -200,7 +223,15 @@ router.delete(
             status: false,
             message: 'Invalid Credentials'
           });
-        console.log(error);
+
+        // Log Error
+        logError(error, {
+          message: 'Error in deleting tech of a user from database',
+          location: 'routes/profile/tech',
+          requestType: 'DELETE',
+          requestUrl: '/profile/tech'
+        });
+
         response
           .status(500)
           .json({ status: false, message: 'Internal Server Error' });

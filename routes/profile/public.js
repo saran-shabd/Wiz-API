@@ -5,6 +5,7 @@ const mongoose = require('mongoose');
 
 const tokenTypes = require('../../constants/tokenTypes');
 const tokenUtils = require('../../utils/tokens');
+const { logError } = require('../../utils/logging');
 
 const router = Router();
 
@@ -44,7 +45,14 @@ router.get(
               });
             })
             .catch(error => {
-              console.log(error);
+              // Log Error
+              logError(error, {
+                message:
+                  'Error in creating new public profile of a user in database',
+                location: 'routes/profile/public',
+                requestType: 'GET',
+                requestUrl: '/profile/public'
+              });
               response.status(500).json({
                 status: false,
                 message: 'Internal Server Error'
@@ -77,7 +85,13 @@ router.get(
         }
       })
       .catch(error => {
-        console.log(error);
+        // Log Error
+        logError(error, {
+          message: 'Error in getting public profile of the user from database',
+          location: 'routes/profile/public',
+          requestType: 'GET',
+          requestUrl: '/profile/public'
+        });
         response
           .status(500)
           .json({ status: false, message: 'Internal Server Error' });
@@ -113,7 +127,13 @@ router.post(
         response.status(200).json({ status: true, message: 'Profile Updated' });
       })
       .catch(error => {
-        console.log(error);
+        // Log Error
+        logError(error, {
+          message: 'Error in updating public profile of a user in database',
+          location: 'routes/profile/public',
+          requestType: 'POST',
+          requestUrl: '/profile/public'
+        });
         response
           .status(500)
           .json({ status: false, message: 'Internal Server Error' });

@@ -3,7 +3,6 @@
 const jwt = require('jsonwebtoken');
 
 const stringUtils = require('./strings');
-
 const { APP_SECRET, OTP_SECRET } = process.env;
 
 const encryptOtp = object => {

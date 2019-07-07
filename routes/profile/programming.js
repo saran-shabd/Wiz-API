@@ -5,6 +5,7 @@ const mongoose = require('mongoose');
 
 const tokenUtils = require('../../utils/tokens');
 const tokenTypes = require('../../constants/tokenTypes');
+const { logError } = require('../../utils/logging');
 
 const router = Router();
 
@@ -57,7 +58,14 @@ router.get(
         });
       })
       .catch(error => {
-        console.log(error);
+        // Log Error
+        logError(error, {
+          message:
+            'Error in getting Programming Profile of a user from database',
+          location: 'routes/profile/programming',
+          requestType: 'GET',
+          requestUrl: '/profile/programming'
+        });
         response
           .status(500)
           .json({ status: false, message: 'Internal Server Error' });
@@ -66,7 +74,7 @@ router.get(
 );
 
 /**
- * Update/Create Programming Profile of the User
+ * @description Update/Create Programming Profile of the User
  */
 router.post(
   '',
@@ -110,7 +118,14 @@ router.post(
         response.status(200).json({ status: true, message: 'Profile Updated' });
       })
       .catch(error => {
-        console.log(error);
+        // Log Error
+        logError(error, {
+          message:
+            'Error in updating Programming profile of a user in database',
+          location: 'routes/profile/programming',
+          requestType: 'POST',
+          requestUrl: '/profile/programming'
+        });
         response
           .status(500)
           .json({ status: false, message: 'Internal Server Error' });

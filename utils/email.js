@@ -7,46 +7,61 @@ const fs = require('fs');
 
 const emailTypes = require('../constants/emailTypes');
 const stringUtils = require('./strings');
+const { logError } = require('./logging');
 
 const templateDir = path.join(__dirname, '..', 'email-templates');
 
 const getEmailTransport = async () => {
-    const KeyValuePair = mongoose.model('KeyValuePair');
-    return KeyValuePair.findOne({ name: 'alert-email-address' }).then(
-        async emailData => {
-            return KeyValuePair.findOne({ name: 'alert-email-password' }).then(
-                passwordData => {
-                    return nodemailer.createTransport({
-                        host: 'smtp-mail.outlook.com',
-                        secureConnection: false,
-                        port: 587,
-                        auth: {
-                            user: stringUtils.decryptStr(emailData.value),
-                            pass: stringUtils.decryptStr(passwordData.value)
-                        },
-                        tls: {
-                            ciphers: 'SSLv3'
-                        }
-                    });
-                }
-            );
-        }
-    );
+  const KeyValuePair = mongoose.model('KeyValuePair');
+  return KeyValuePair.findOne({ name: 'alert-email-address' })
+    .then(async emailData => {
+      return KeyValuePair.findOne({ name: 'alert-email-password' })
+        .then(passwordData => {
+          return nodemailer.createTransport({
+            host: 'smtp-mail.outlook.com',
+            secureConnection: false,
+            port: 587,
+            auth: {
+              user: stringUtils.decryptStr(emailData.value),
+              pass: stringUtils.decryptStr(passwordData.value)
+            },
+            tls: {
+              ciphers: 'SSLv3'
+            }
+          });
+        })
+        .catch(error => {
+          // Log Error
+          logError(error, {
+            message: 'Could not fetch alert-email-password from database',
+            location: 'utils/email/getEmailTransport()'
+          });
+          return null;
+        });
+    })
+    .catch(error => {
+      // Log Error
+      logError(error, {
+        message: 'Could not fetch alert-email-address from database',
+        location: 'utils/email/getEmailTransport()'
+      });
+      return null;
+    });
 };
 
 const getEmailTemplate = async type => {
-    if (type === emailTypes.SignUpOtp) {
-        return fs.readFileSync(
-            path.join(templateDir, `${emailTypes.SignUpOtp}.html`)
-        );
-    } else if (type === emailTypes.ForgotPasswordOtp) {
-        return fs.readFileSync(
-            path.join(templateDir, `${emailTypes.ForgotPasswordOtp}.html`)
-        );
-    }
+  if (type === emailTypes.SignUpOtp) {
+    return fs.readFileSync(
+      path.join(templateDir, `${emailTypes.SignUpOtp}.html`)
+    );
+  } else if (type === emailTypes.ForgotPasswordOtp) {
+    return fs.readFileSync(
+      path.join(templateDir, `${emailTypes.ForgotPasswordOtp}.html`)
+    );
+  }
 };
 
 module.exports = {
-    getEmailTransport,
-    getEmailTemplate
+  getEmailTransport,
+  getEmailTemplate
 };
