@@ -4,7 +4,7 @@
   "description": "Supporting REST API for Connect++",
   "main": "server.js",
   "scripts": {
-    "devStart": "nodemon server.js",
+    "dev-start": "nodemon server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
