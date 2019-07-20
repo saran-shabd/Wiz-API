@@ -12,6 +12,38 @@ const router = Router();
 
 /**
  * @private
+ * @param {}
+ * @returns { users }
+ * @description Get all users basic information
+ */
+router.get(
+  '/get-all',
+  verifyTokenMiddlewareGetRequests(tokenTypes.UserAccessToken),
+  (request, response) => {
+    const User = mongoose.model('User');
+    User.find()
+      .then(data => {
+        return response
+          .status(200)
+          .json({ status: true, message: 'Returning all users', users: data });
+      })
+      .catch(error => {
+        // Log Error
+        logError(error, {
+          message: 'Error in fetching all users from database',
+          location: 'routes/search/text-match',
+          requestType: 'GET',
+          requestUrl: '/search/text-match/get-all'
+        });
+        response
+          .status(500)
+          .json({ status: false, message: 'Internal Server Error' });
+      });
+  }
+);
+
+/**
+ * @private
  * @param { username, pageNo }
  * @returns { users }
  * @description Search User(s) using firstname or lastname or both
@@ -20,7 +52,7 @@ router.get(
   '/username',
   verifyTokenMiddlewareGetRequests(tokenTypes.UserAccessToken),
   (request, response) => {
-    let { username, pageNo } = request.body;
+    let { username, pageNo } = request.body; // pagination not being used currently
 
     // check for invalid credentials
     if (containsEmptyString([username, pageNo]))
