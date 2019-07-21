@@ -5,8 +5,9 @@
  */
 
 module.exports = {
-    UserAccessToken: 'UserAccessToken',
-    SignUpAccessToken: 'SignUpAccessToken',
-    ForgotPasswordAccessToken: 'ForgotPasswordAccessToken',
-    ForgotPasswordVerifyAccessToken: 'ForgotPasswordVerifyAccessToken'
+  UserAccessToken: 'UserAccessToken',
+  SignUpAccessToken: 'SignUpAccessToken',
+  ForgotPasswordAccessToken: 'ForgotPasswordAccessToken',
+  ForgotPasswordVerifyAccessToken: 'ForgotPasswordVerifyAccessToken',
+  SearchAccessToken: 'SearchAccessToken'
 };

@@ -6,11 +6,13 @@ const log4js = require('log4js');
 const logger = log4js.configure({
   appenders: {
     errorLogs: { type: 'file', filename: 'logs/errorLogs.log' },
-    infoLogs: { type: 'file', filename: 'logs/infoLogs.log' }
+    infoLogs: { type: 'file', filename: 'logs/infoLogs.log' },
+    warnLogs: { type: 'file', filename: 'logs/warnLogs.log' }
   },
   categories: {
     default: { appenders: ['errorLogs'], level: 'error' },
-    info: { appenders: ['infoLogs'], level: 'info' }
+    info: { appenders: ['infoLogs'], level: 'info' },
+    warn: { appenders: ['warnLogs'], level: 'warn' }
   }
 });
 
@@ -32,4 +34,13 @@ const logInfo = message => {
   logger.getLogger('info').info(JSON.stringify(message));
 };
 
-module.exports = { logError, logInfo };
+/**
+ * @param { message }
+ * @returns {}
+ * @description create warning logs
+ */
+const logWarn = message => {
+  logger.getLogger('info').warn(JSON.stringify(message));
+};
+
+module.exports = { logError, logInfo, logWarn };

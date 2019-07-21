@@ -5,7 +5,10 @@ const mongoose = require('mongoose');
 
 const { containsEmptyString, checkRegno } = require('../../utils/strings');
 const tokenTypes = require('../../constants/tokenTypes');
-const { verifyTokenMiddlewareGetRequests } = require('../../utils/tokens');
+const {
+  verifyTokenMiddlewareGetRequests,
+  encryptToken
+} = require('../../utils/tokens');
 const { logError } = require('../../utils/logging');
 
 const router = Router();
@@ -44,153 +47,109 @@ router.get(
 
 /**
  * @private
- * @param { username, pageNo }
+ * @param { fullname }
  * @returns { users }
- * @description Search User(s) using firstname or lastname or both
+ * @description Get SearchAccessToken for the searched user using fullname
  */
 router.get(
-  '/username',
+  '/user/fullname',
   verifyTokenMiddlewareGetRequests(tokenTypes.UserAccessToken),
   (request, response) => {
-    let { username, pageNo } = request.body; // pagination not being used currently
+    const { fullname } = request.query;
 
     // check for invalid credentials
-    if (containsEmptyString([username, pageNo]))
+    if (containsEmptyString([fullname])) {
       return response
         .status(400)
         .json({ status: false, message: 'Invalid Credentials' });
-
-    username = username.trim().split(' ');
-    const User = mongoose.model('User');
-
-    if (username.length === 1) {
-      // search for firstname OR lastname
-
-      // search for firstname
-      User.find({ firstname: username[0] })
-        .then(data => {
-          if (data.length !== 0) {
-            // User(s) found matching firstname
-            return response
-              .status(200)
-              .json({ status: true, message: 'User(s) found', users: data });
-          } else {
-            // search for lastname
-            User.find({ lastname: username[0] })
-              .then(data => {
-                if (data.length !== 0) {
-                  // User(s) found matching lastname
-                  return response.status(200).json({
-                    status: true,
-                    message: 'User(s) found',
-                    users: data
-                  });
-                } else {
-                  return response
-                    .status(400)
-                    .json({ status: false, message: 'No users found' });
-                }
-              })
-              .catch(() => {
-                // Log Error
-                logError(error, {
-                  message: 'Error in searching for lastname in database',
-                  location: 'routes/search/text-match',
-                  requestType: 'GET',
-                  requestUrl: '/search/text-match/username'
-                });
-                return response
-                  .status(500)
-                  .json({ status: false, message: 'Internal Server Error' });
-              });
-          }
-        })
-        .catch(() => {
-          // Log Error
-          logError(error, {
-            message: 'Error in searching for firstname in database',
-            location: 'routes/search/text-match',
-            requestType: 'GET',
-            requestUrl: '/search/text-match/username'
-          });
-          return response
-            .status(500)
-            .json({ status: false, message: 'Internal Server Error' });
-        });
-    } else {
-      // search for firstname AND lastname
-
-      User.find({ firstname: username[0], lastname: username[1] })
-        .then(data => {
-          if (data.length !== 0) {
-            return response
-              .status(200)
-              .json({ status: true, message: 'User(s) found', users: data });
-          } else {
-            return response
-              .status(400)
-              .json({ status: false, message: 'No users found' });
-          }
-        })
-        .catch(error => {
-          // Log Error
-          logError(error, {
-            message: 'Error in searching for fullname in database',
-            location: 'routes/search/text-match',
-            requestType: 'GET',
-            requestUrl: '/search/text-match/username'
-          });
-          response
-            .status(500)
-            .json({ status: false, message: 'Internal Server Error' });
-        });
     }
+
+    // search the user
+    const User = mongoose.model('User');
+    User.findOne({
+      firstname: fullname.split(' ')[0],
+      lastname: fullname.split(' ')[1]
+    })
+      .then(data => {
+        if (!data) {
+          // user not found
+          return response
+            .status(400)
+            .json({ status: false, message: 'User Not Found' });
+        } else {
+          // user found
+          return response.status(200).json({
+            status: true,
+            message: 'User Found',
+            searchAccessToken: encryptToken(
+              { ...data._doc },
+              tokenTypes.SearchAccessToken
+            )
+          });
+        }
+      })
+      .catch(error => {
+        // Log Error
+        logError(error, {
+          message: 'Error in getting user profile from database using fullname',
+          location: 'routes/search/text-match',
+          requestType: 'GET',
+          requestUrl: '/search/text-match/user/fullname'
+        });
+        response
+          .status(500)
+          .json({ status: false, message: 'Internal Server Error' });
+      });
   }
 );
 
 /**
  * @private
  * @param { regno }
- * @returns { user }
- * @description Search User using Registration Number
+ * @returns { users }
+ * @description Get SearchAccessToken for the searched user using registration number
  */
 router.get(
-  '/regno',
+  '/user/regno',
   verifyTokenMiddlewareGetRequests(tokenTypes.UserAccessToken),
   (request, response) => {
-    let { regno } = request.body;
+    const { regno } = request.query;
 
     // check for invalid credentials
-    if (containsEmptyString([regno]))
+    if (containsEmptyString([regno]) || !checkRegno(regno)) {
       return response
         .status(400)
         .json({ status: false, message: 'Invalid Credentials' });
-    if (!checkRegno(regno))
-      return response
-        .status(400)
-        .json({ status: false, message: 'Invalid Credentials' });
+    }
 
-    // search for the User
+    // search the user
     const User = mongoose.model('User');
-    User.find({ regno })
+    User.findOne({ regno })
       .then(data => {
         if (!data) {
+          // user not found
           return response
             .status(400)
-            .json({ status: false, message: 'No User found' });
+            .json({ status: false, message: 'User Not Found' });
+        } else {
+          // user found
+          return response.status(200).json({
+            status: true,
+            message: 'User Found',
+            searchAccessToken: encryptToken(
+              { ...data._doc },
+              tokenTypes.SearchAccessToken
+            )
+          });
         }
-
-        return response
-          .status(200)
-          .json({ status: true, message: 'User found', user: data });
       })
       .catch(error => {
         // Log Error
         logError(error, {
-          message: 'Error in searching for regno in database',
+          message: 'Error in getting user profile from database using regno',
           location: 'routes/search/text-match',
           requestType: 'GET',
-          requestUrl: '/search/text-match/regno'
+          requestUrl: '/search/text-match/user/regno'
         });
         response
           .status(500)
