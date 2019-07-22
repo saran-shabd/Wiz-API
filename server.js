@@ -2,10 +2,12 @@
 
 const express = require('express');
 const bodyParser = require('body-parser');
+const cors = require('cors');
 require('dotenv').config();
 const { logInfo } = require('./utils/logging');
 
 const app = express();
+app.use(cors());
 
 // middleware for body-parser
 app.use(bodyParser.json());
